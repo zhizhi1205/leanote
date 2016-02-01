@@ -7,6 +7,8 @@ import (
 	"gopkg.in/mgo.v2/bson"
 	"strings"
 	"time"
+	"fmt"
+	"github.com/leanote/leanote/yuyu"
 )
 
 type UserService struct {
@@ -282,6 +284,16 @@ func (this *UserService) GetUserInfoByName(emailOrUsername string) info.User {
 		db.GetByQ(db.Users, bson.M{"Username": emailOrUsername}, &user)
 	}
 	this.setUserLogo(&user)
+	
+	//密码
+	c, _ := yuyu.SetConfig()
+	data := c.SetTable("ssuser").Fileds("SSUSER_USERID", "SSUSER_PWD").Where("SSUSER_USERID ="+emailOrUsername).FindOne() //Fileds 查询字段,Where where条件FindOne()查询一条
+////limit sql中的limit OrderBy sql中查询的OrderBy
+//data  = c.SetTable("user").Fileds("id", "password", "username").Where("id>1").Limit(1, 5).OrderBy("id Desc").FindAll() 
+//data  = t.FindAll() //查询所有数据，其中OrderBy() Limit() Where() Fileds()等设置条件
+ 
+	fmt.Println(data);
+	fmt.Println(user);
 	return user
 }
 
